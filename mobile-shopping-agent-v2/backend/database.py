@@ -28,6 +28,31 @@ class PhoneDatabase:
                 "imageUrl": "https://placehold.co/300x300?text=iPhone+15+Pro"
             },
             {
+                "id": 7,
+                "brand": "Samsung",
+                "model": "Galaxy S23 Ultra",
+                "price": 124999,
+                "camera": {
+                    "main": "200MP",
+                    "ultrawide": "12MP",
+                    "telephoto": "10MP",
+                    "features": ["OIS", "8K video", "Night mode", "100x Space Zoom"]
+                },
+                "display": {
+                    "type": "AMOLED",
+                    "size": "6.8 inches",
+                    "refreshRate": 120,
+                    "resolution": "3088 x 1440"
+                },
+                "processor": "Snapdragon 8 Gen 2",
+                "ram": "12GB",
+                "storage": "256GB",
+                "battery": "5000mAh",
+                "os": "Android 13",
+                "waterResistant": True,
+                "imageUrl": "https://placehold.co/300x300?text=Galaxy+S23+Ultra"
+            },
+            {
                 "id": 2,
                 "brand": "Samsung",
                 "model": "Galaxy S24 Ultra",
