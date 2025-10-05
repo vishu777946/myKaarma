@@ -2,8 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 
 // API base URL
-const API_URL = 'http://localhost:5000/api';
-
+const API_URL = 'https://mykaarma-1.onrender.com';
 export default function Home() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
