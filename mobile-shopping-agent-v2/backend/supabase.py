@@ -6,8 +6,8 @@ from supabase import create_client
 load_dotenv()
 
 # Initialize Supabase client
-supabase_url = os.getenv('SUPABASE_URL', 'https://your-project-url.supabase.co')
-supabase_key = os.getenv('SUPABASE_KEY', 'your-anon-key')
+supabase_url = os.getenv('SUPABASE_URL', 'https://nobtcddkqgaipjrciqxp.supabase.co')
+supabase_key = os.getenv('SUPABASE_KEY', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5vYnRjZGRrcWdhaXBqcmNpcXhwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk0MDA5NDgsImV4cCI6MjA3NDk3Njk0OH0.E7QbRE8TXhdkfdD2Ar7BTF6jc6Q8JaRwXGGhDAymSsA')
 supabase = create_client(supabase_url, supabase_key)
 
 class PhoneDatabase:

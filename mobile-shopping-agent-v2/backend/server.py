@@ -28,7 +28,7 @@ app.add_middleware(
 )
 
 # Initialize Google Generative AI
-genai.configure(api_key=os.getenv("GEMINI_API_KEY", "YOUR_API_KEY"))
+genai.configure(api_key=os.getenv("GEMINI_API_KEY", "AIzaSyDcfmOpQpFr1jUy22KseXHbCuc6bm2wygU"))
 
 # Safety patterns to detect adversarial queries
 safety_patterns = {
