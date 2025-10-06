@@ -5,7 +5,13 @@ from pydantic import BaseModel
 from dotenv import load_dotenv
 import google.generativeai as genai
 import re
-from database import phone_database
+# Use local database by default, but allow for Supabase in production
+try:
+    from supabase import phone_database
+    print("Using Supabase database")
+except ImportError:
+    from database import phone_database
+    print("Using local database")
 
 # Load environment variables
 load_dotenv()
@@ -151,9 +157,19 @@ async def process_chat(request: ChatRequest):
             
             # Find mentioned phone models in the message
             for phone in phones:
-                full_name = f"{phone['brand']} {phone['model']}".lower()
-                if full_name.lower() in message.lower():
+                brand_model = f"{phone['brand']} {phone['model']}".lower()
+                model_only = f"{phone['model']}".lower()
+                
+                # Check for full name (brand + model) or just model name
+                if brand_model in message.lower() or model_only in message.lower():
                     phone_models.append(phone)
+            
+            # Special case for Galaxy S23 Ultra vs S23 Ultra
+            if "galaxy s23" in message.lower() or "s23 ultra" in message.lower():
+                for phone in phones:
+                    if phone["model"] == "Galaxy S23 Ultra":
+                        if phone not in phone_models:
+                            phone_models.append(phone)
             
             # If we found exactly 2 phones, compare them
             if len(phone_models) == 2:
@@ -164,8 +180,44 @@ async def process_chat(request: ChatRequest):
                     "displayProducts": False,
                     "compareProducts": True
                 }
-            # Otherwise fall back to the first two phones
+            # If we found more than 2 phones, use the first two
+            elif len(phone_models) > 2:
+                comparison = phone_database.compare_phones(phone_models[0]["id"], phone_models[1]["id"])
+                return {
+                    "message": f"Here's a comparison between {phone_models[0]['brand']} {phone_models[0]['model']} and {phone_models[1]['brand']} {phone_models[1]['model']}:",
+                    "comparison": comparison,
+                    "displayProducts": False,
+                    "compareProducts": True
+                }
+            # Otherwise fall back to specific phones for common comparisons
             else:
+                # Check for common comparison phrases
+                if "iphone" in message.lower() and "galaxy" in message.lower():
+                    iphone = None
+                    galaxy = None
+                    
+                    # Find iPhone and Galaxy models
+                    for phone in phones:
+                        if phone["brand"] == "Apple" and "iPhone" in phone["model"]:
+                            iphone = phone
+                        if phone["brand"] == "Samsung" and "Galaxy" in phone["model"]:
+                            if "s23" in message.lower() and "Galaxy S23 Ultra" == phone["model"]:
+                                galaxy = phone
+                            elif "s24" in message.lower() and "Galaxy S24 Ultra" == phone["model"]:
+                                galaxy = phone
+                            elif not galaxy:  # Default to any Galaxy if specific model not found
+                                galaxy = phone
+                    
+                    if iphone and galaxy:
+                        comparison = phone_database.compare_phones(iphone["id"], galaxy["id"])
+                        return {
+                            "message": f"Here's a comparison between {iphone['brand']} {iphone['model']} and {galaxy['brand']} {galaxy['model']}:",
+                            "comparison": comparison,
+                            "displayProducts": False,
+                            "compareProducts": True
+                        }
+                
+                # Default fallback
                 comparison = phone_database.compare_phones(phones[0]["id"], phones[1]["id"])
                 return {
                     "message": f"Here's a comparison between {phones[0]['brand']} {phones[0]['model']} and {phones[1]['brand']} {phones[1]['model']}:",
